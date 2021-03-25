@@ -49,7 +49,7 @@ input[type=password] {
 .textfield input::placeholder,
 .textfield textarea::placeholder {
     font-weight: 900;
-    opacity: 0.4;
+    opacity: 40%;
 }
 
 .textfield textarea {
@@ -438,13 +438,13 @@ aside.thick {
     }
 
     100% {
-        opacity: 1;
+        opacity: 100%;
     }
 }
 
 @keyframes fadeOut {
     0% {
-        opacity: 1;
+        opacity: 100%;
     }
 
     100% {
@@ -482,7 +482,7 @@ aside.thick {
     line-height: 1;
     width: 100%;
     transition: opacity 0.5s ease;
-    opacity: 1;
+    opacity: 100%;
 }
 
 @keyframes skeleton-keyframes {
@@ -641,7 +641,7 @@ header a.router-link-exact-active {
 
 header .hamburger {
     display: none;
-    opacity: 0.5;
+    opacity: 50%;
     top: 5px;
 }
 
@@ -758,7 +758,7 @@ body {
 
 .list-item .time, .list-item .desc {
     white-space: nowrap;
-    opacity: 0.7;
+    opacity: 70%;
     font-style: italic;
     margin-left: 0.25em;
 }
@@ -770,6 +770,6 @@ body {
 }
 
 hr {
-    opacity: 0.2;
+    opacity: 20%;
 }
 </style>
