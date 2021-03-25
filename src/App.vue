@@ -49,7 +49,7 @@ input[type=password] {
 .textfield input::placeholder,
 .textfield textarea::placeholder {
     font-weight: 900;
-    opacity: 40%;
+    opacity: 0.4;
 }
 
 .textfield textarea {
@@ -292,26 +292,26 @@ input[type=password] {
 h1 {
     font-size: 36px;
     font-weight: 900;
-    opacity: 80%;
+    opacity: 0.8;
     margin: 0;
 }
 
 h3 {
     font-size: 14px;
     font-weight: 900;
-    opacity: 60%;
+    opacity: 0.6;
     margin: 0;
 }
 
 aside {
     font-size: 14px;
-    opacity: 60%;
+    opacity: 0.6;
     margin: 16px 0;
 }
 
 aside.thick {
     font-weight: 900;
-    opacity: 30%;
+    opacity: 0.3;
     margin: 0;
 }
 
@@ -438,13 +438,13 @@ aside.thick {
     }
 
     100% {
-        opacity: 100%;
+        opacity: 1;
     }
 }
 
 @keyframes fadeOut {
     0% {
-        opacity: 100%;
+        opacity: 1;
     }
 
     100% {
@@ -482,7 +482,7 @@ aside.thick {
     line-height: 1;
     width: 100%;
     transition: opacity 0.5s ease;
-    opacity: 100%;
+    opacity: 1;
 }
 
 @keyframes skeleton-keyframes {
@@ -569,12 +569,12 @@ box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.25)
 
 .form-entry .heading .label {
     font-size: 24px;
-    opacity: 65%;
+    opacity: 0.65;
 }
 
 .form-entry .heading .optional {
     font-size: 12px;
-    opacity: 45%;
+    opacity: 0.45;
 }
 
 .form-entry .textfield {
@@ -609,7 +609,7 @@ header a {
     padding: 8px 16px;
     font-size: 18px;
     margin: 0 32px;
-    opacity: 50%;
+    opacity: 0.50;
 }
 
 @media (max-width: 900px) {
@@ -631,17 +631,17 @@ header a {
 }
 
 header a:hover {
-    opacity: 70%;
+    opacity: 0.70;
 }
 
 header a.router-link-exact-active {
-    opacity: 100%;
+    opacity: 1;
     color: #be5679;
 }
 
 header .hamburger {
     display: none;
-    opacity: 50%;
+    opacity: 0.5;
     top: 5px;
 }
 
@@ -758,7 +758,7 @@ body {
 
 .list-item .time, .list-item .desc {
     white-space: nowrap;
-    opacity: 70%;
+    opacity: 0.7;
     font-style: italic;
     margin-left: 0.25em;
 }
@@ -770,6 +770,6 @@ body {
 }
 
 hr {
-    opacity: 20%;
+    opacity: 0.2;
 }
 </style>
