@@ -11,6 +11,9 @@
       </div>
     </header>
     <router-view/>
+    <div class="source">
+      Source at <a href="https://github.com/emmachase/creative3">GitHub</a>
+    </div>
   </div>
 </template>
 
@@ -26,6 +29,20 @@ input[type=text] {
 input[type=password] {
     font-family: "Roboto";
     font-weight: 900;
+}
+
+.source {
+  position: fixed;
+  background: white;
+  left: 0;
+  bottom: 0;
+  padding: 10px 16px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);
+  border-top-right-radius: 8px;
+}
+
+.source a {
+  color: #cc0e4d;
 }
 
 .textfield {
