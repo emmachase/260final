@@ -25,6 +25,11 @@ const routes = [
     component: List
   },
   {
+    path: '/list/:user',
+    name: 'List',
+    component: List
+  },
+  {
     path: '/upload',
     name: 'Upload',
     component: Upload

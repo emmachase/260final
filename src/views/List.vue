@@ -2,19 +2,21 @@
   <div>
     <div class="content-wrapper">
       <div class="list-container">
+        <h2 v-if="$route.params.user" class="t-center">{{$route.params.user}}'s Uploads</h2>
+
         <div class="textfield">
           <input type="text" v-model="tagsearch" placeholder="Filter by tags (comma seperated)"/>
         </div>
 
         <div v-for="(img, idx) in filteredImages" :key="idx">
           <div class="list-item">
-            <span class="name">
+            <span class="name clickable" @click="edit(idx)">
               <a
                 :href="img.src"
                 >{{img.title}}</a
               >
             </span>
-            <span class="time">&ndash; by <strong>@{{img.uploader.name}}</strong></span>
+            <span class="time">&ndash; by <strong class="clickable" @click="$router.push('/list/' + img.uploader.name)">@{{img.uploader.name}}</strong></span>
             <span class="time">&ndash; {{new Date(img.created).toLocaleTimeString()}}</span>
             <span class="desc" v-if="img.desc">&ndash; {{img.desc}}</span>
             <div class="spacer"></div>
@@ -71,9 +73,14 @@ export default Vue.extend({
   },
   computed: {
     filteredImages() {
+      let images = this.images;
+      if (this.$route.params.user) {
+        images = images.filter(image => image.uploader.name === this.$route.params.user);
+      }
+
       const tags = this.tagsearch.split(/\s*,\s*/).filter(x => x);
-      if (tags.length === 0) return this.images;
-      return this.images.filter(image => image.tags.split(/\s*,\s*/).some(t => tags.includes(t)));
+      if (tags.length === 0) return images;
+      return images.filter(image => image.tags.split(/\s*,\s*/).some(t => tags.includes(t)));
     }
   },
   methods: {

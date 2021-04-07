@@ -108,6 +108,10 @@ input[type=password] {
   margin-left: 8px;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .button {
     display: block;
     border: none;
@@ -777,7 +781,7 @@ body {
     white-space: nowrap;
 }
 
-.list-item .name > a:hover {
+.list-item .name > a:hover, .clickable:hover {
     color: #cc0e4d;
 }
 
