@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import axios from 'axios'
 
 Vue.config.productionTip = false
 
@@ -17,6 +18,17 @@ let data = {
     { title: "Error", isImage: true, src: "/images/MfkqP0XXhB.BW9jDomSkXyUodlDlMRpSZW4rQQqBEd9.png", description: "", tags: "", time: new Date() },
   ]
 }
+
+const axiosConfig = {
+  baseURL: '/api',
+  withCredentials: true,
+  timeout: 30000,
+  validateStatus() {
+    return true;
+  }
+};
+
+Vue.prototype.$axios = axios.create(axiosConfig)
 
 new Vue({
   router, data,

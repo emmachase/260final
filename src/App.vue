@@ -12,7 +12,7 @@
     </header>
     <router-view/>
     <div class="source">
-      Source at <a href="https://github.com/emmachase/creative3">GitHub</a>
+      Source at <a href="https://github.com/emmachase/creative4">GitHub</a>
     </div>
   </div>
 </template>
@@ -154,7 +154,7 @@ input[type=password] {
     background: #af0c42;
 }
 
-.button[disabled]:not(.hide-load) {
+.button[disabled]:not(.hide-load), .button.disabled {
     background: #eeeeef;
     color: #d4d4d6;
     cursor: default;
@@ -350,6 +350,10 @@ aside.thick {
     flex: 1;
     text-align: center;
     max-width: 400px;
+}
+
+.t-center {
+    text-align: center;
 }
 
 .gcenter {
@@ -557,6 +561,10 @@ aside.thick {
 
 .uploadbox .close-btn:hover:active circle {
     fill: #D0D0D0;
+}
+
+.fancy {
+  font-style: italic;
 }
 
 /*

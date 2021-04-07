@@ -90,12 +90,13 @@ export default Vue.extend({
       if (files.length) {
         this.file = files[0];
         
-        const reader = new FileReader();
-        reader.addEventListener("load", () => {
-          this.$emit("upload", reader.result);
-        });
+        this.$emit("upload", this.file);
+        // const reader = new FileReader();
+        // reader.addEventListener("load", () => {
+        //   this.$emit("upload", reader.result);
+        // });
 
-        reader.readAsDataURL(this.file);
+        // reader.readAsDataURL(this.file);
       } else {
         this.file = null;
       }

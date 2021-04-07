@@ -2,7 +2,11 @@
   <div>
     <div class="content-wrapper">
       <div class="list-container">
-        <div v-for="(img, idx) in $root.$data.images" :key="idx">
+        <div class="textfield">
+          <input type="text" v-model="tagsearch" placeholder="Filter by tags (comma seperated)"/>
+        </div>
+
+        <div v-for="(img, idx) in filteredImages" :key="idx">
           <div class="list-item">
             <span class="name">
               <a
@@ -10,15 +14,21 @@
                 >{{img.title}}</a
               >
             </span>
-            <span class="time">&ndash; {{img.time.toLocaleTimeString()}}</span>
-            <span class="desc" v-if="img.description">&ndash; {{img.description}}</span>
+            <span class="time">&ndash; by <strong>@{{img.uploader.name}}</strong></span>
+            <span class="time">&ndash; {{new Date(img.created).toLocaleTimeString()}}</span>
+            <span class="desc" v-if="img.desc">&ndash; {{img.desc}}</span>
             <div class="spacer"></div>
             <div class="actions">
               <button class="button inline" @click="edit(idx)">View</button>
               <button class="button inline" @click="remove(idx)">Delete</button>
             </div>
           </div>
-          <hr v-if="idx !== $root.$data.images.length - 1"/>
+          <hr v-if="idx !== images.length - 1"/>
+        </div>
+        <div class="t-center fancy" v-if="filteredImages.length === 0">
+          <h3>
+            Nobody's home...
+          </h3>
         </div>
       </div>
     </div>
@@ -41,15 +51,47 @@
   </div>
 </template>
 
+<style scoped>
+h3 {
+  font-size: 1.5em;
+}
+</style>
+
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
+  data() {
+    return {
+      images: [],
+      tagsearch: ""
+    }
+  },
+  mounted() {
+    this.fetch();
+  },
+  computed: {
+    filteredImages() {
+      const tags = this.tagsearch.split(/\s*,\s*/).filter(x => x);
+      if (tags.length === 0) return this.images;
+      return this.images.filter(image => image.tags.split(/\s*,\s*/).some(t => tags.includes(t)));
+    }
+  },
   methods: {
     edit(idx) {
-      this.$router.push('/file/' + idx);
+      this.$router.push('/file/' + this.images[idx]._id);
     },
-    remove(idx) {
-      this.$root.$data.images.splice(idx, 1);
+    async remove(idx) {
+      await this.$axios.delete("uploads/" + this.images[idx]._id);
+      this.fetch();
+    },
+    async fetch() {
+      const result = await this.$axios.get("uploads");
+      if (result.status == 200) {
+        this.images = result.data.map(image => ({
+          ...image, 
+          tags: image.tags.join(", ")
+        }))
+      }
     }
   }
 })

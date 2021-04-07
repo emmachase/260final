@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="content-wrapper">
+    <div class="content-wrapper" v-if="file">
       <div class="twobreak" style="display: flex; justify-content: center">
         <div class="col">
-          <img :src="file.isImage ? file.src : '/file.svg'"/>
+          <img :src="file.isImage ? file.path : '/file.svg'"/>
         </div>
         <div class="col">
           <div class="form-entry">
@@ -21,7 +21,7 @@
               </div>
               <div class="textfield">
                 <textarea
-                  v-model="file.description"
+                  v-model="file.desc"
                   type="text"
                   placeholder="This image is epic and has cool elements."
                 ></textarea>
@@ -45,6 +45,9 @@
             </div>
         </div>
       </div>
+    </div>
+    <div v-else>
+      <h1 class="t-center">Loading...</h1>
     </div>
     <div class="force-scroll">.</div>
     <div class="page-accent">
@@ -85,19 +88,42 @@ img {
 import Vue from "vue";
 export default Vue.extend({
   data() {
-    const file = this.$root.$data.images[this.$route.params.id];
-
     return {
-      file,
+      file: null,
     };
   },
+  mounted() {
+    this.fetch();
+  },
   methods: {
-    del() {
-      this.$root.$data.images.splice(this.$route.params.id, 1)
-      this.$router.push('/list')
+    async del() {
+      const result = await this.$axios.delete("uploads/" + this.file._id);
+      
+      if (result.status == 200) {
+        this.$router.push('/list')
+      }
     },
-    save() {
-      this.$router.push('/list')
+    async save() {
+      const result = await this.$axios.put("uploads/" + this.file._id, {
+        title: this.file.title,
+        desc: this.file.desc,
+        tags: this.file.tags,
+      });
+
+      if (result.status == 200) {
+        this.$router.push('/list')
+      }
+    },
+    
+    async fetch() {
+      const result = await this.$axios.get("uploads/" + this.$route.params.id);
+      if (result.status == 200) {
+        this.file = {
+          ...result.data,
+          tags: result.data.tags.join(", "),
+          isImage: result.data.mime.startsWith("image")
+        };
+      }
     }
   }
 });

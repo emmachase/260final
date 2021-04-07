@@ -1,0 +1,9 @@
+localhost:5000 {
+    proxy /api localhost:3000 {
+        transparent
+    }
+
+    proxy / localhost:8080 {
+        transparent
+    }
+}

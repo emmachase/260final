@@ -3,10 +3,15 @@
     <div class="infinite-scroll-component__outerdiv">
       <div class="infinite-scroll-component grid"
         style="height:auto;overflow:auto;-webkit-overflow-scrolling:touch">
-        <div class="im-card" v-for="[img, idx] in $root.$data.images.map((x, i) => [x, i]).filter(x => x[0].isImage)" :key="idx">
+        <div class="im-card" v-for="[img, idx] in images.map((x, i) => [x, i]).filter(x => x[0].isImage)" :key="idx">
           <div class="main-content">
-            <img :src="img.src" draggable="false" @click="$router.push('/file/' + idx)">
+            <img :src="img.path" draggable="false" @click="$router.push('/file/' + images[idx]._id)">
           </div>
+        </div>
+        <div class="t-center fancy" v-if="images.length === 0">
+          <h3>
+            Nobody's home...
+          </h3>
         </div>
       </div>
     </div>
@@ -30,9 +35,32 @@
   </div>
 </template>
 
+<style scoped>
+h3 {
+  position: absolute;
+  font-size: 1.5em;
+  width: 100%;
+  left: 0;
+}
+</style>
+
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-  
+  data() {
+    return {
+      images: []
+    }
+  },
+  async mounted() {
+    const result = await this.$axios.get("uploads");
+    if (result.status == 200) {
+      this.images = result.data.map(image => ({
+        ...image, 
+        tags: image.tags.join(", "),
+        isImage: image.mime.startsWith("image")
+      }));
+    }
+  },
 })
 </script>

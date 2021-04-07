@@ -56,7 +56,7 @@
             </aside>
             <div class="submit" style="display: flex">
               <div style="flex: 1"></div>
-              <button class="button hide-load">Upload</button>
+              <button :disabled="!valid" :class="{ disabled: !valid }" class="button hide-load">Upload</button>
             </div>
           </div>
         </form>
@@ -89,26 +89,33 @@ export default Vue.extend({
     file: null,
     title: "",
     description: "",
-    tags: ""
+    tags: "",
+    error: false
   }),
   components: {
     UploadBox
+  },
+  computed: {
+    valid() {
+      return this.file && this.title;
+    }
   },
   methods: {
     uploadFile(file) {
       this.file = file;
     },
-    submit() {
-      this.$root.$data.images.unshift({
-        title: this.title,
-        description: this.description,
-        tags: this.tags.split(",").map(x => x.trim()).join(", "),
-        src: this.file,
-        time: new Date(),
-        isImage: this.file.startsWith("data:image")
-      })
+    async submit() {
+      const data = new FormData();
+      data.append("file", this.file, this.file.name);
+      data.append("title", this.title);
+      data.append("desc", this.description);
+      data.append("tags", this.tags);
 
-      this.$router.push('/list');
+      const result = await this.$axios.post("upload", data);
+
+      if (result.status == 200) {
+        this.$router.push('/list');
+      }
     }
   }
 })
