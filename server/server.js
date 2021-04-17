@@ -29,10 +29,12 @@ app.use(session({
 const mongoose = require('mongoose');
 
 // connect to the database
-mongoose.connect('mongodb://localhost:27017/creativefour', {
+mongoose.connect('mongodb://localhost:27017/final', {
     useNewUrlParser: true,
     useFindAndModify: false,
 });
+
+
 
 const multer = require('multer')
 const storage = multer.diskStorage({
@@ -76,7 +78,49 @@ const uploadSchema = new mongoose.Schema({
 
 const Upload = mongoose.model('Upload', uploadSchema);
 
-app.get('/api/images/:path', async (req, res) => {
+const commentSchema = new mongoose.Schema({
+    poster: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    upload: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Upload'
+    },
+    text: String
+})
+
+const Comment = mongoose.model('Comment', commentSchema);
+
+// middleware function to check for logged-in users
+const validUser = async (req, res, next) => {
+    if (!req.session.user)
+      return res.status(403).send({
+        message: "not logged in"
+      });
+    try {
+      const user = await User.findOne({
+        _id: req.session.user
+      });
+      if (!user) {
+        return res.status(403).send({
+          message: "not logged in"
+        });
+      }
+      // set the user field in the request
+      req.user = user;
+    } catch (error) {
+      // Return an error if user does not exist.
+      return res.status(403).send({
+        message: "not logged in"
+      });
+    }
+  
+    // if everything succeeds, move to the next middleware
+    next();
+};
+
+app.get('/api/images/:path', validUser, async (req, res) => {
     res.sendFile(path.join(__dirname, 'images', req.params.path));
 })
 
@@ -98,7 +142,7 @@ app.post('/api/login', async (req, res) => {
     return res.sendStatus(200);
 });
 
-app.post('/api/upload', upload.single('file'), async (req, res) => {
+app.post('/api/upload', validUser, upload.single('file'), async (req, res) => {
     if (!req.file) {
         return res.sendStatus(400);
     }
@@ -129,7 +173,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 });
 
 // Get a list of all of the uploads in the museum.
-app.get('/api/uploads', async (req, res) => {
+app.get('/api/uploads', validUser, async (req, res) => {
     try {
         const uploads = await Upload.find().populate("uploader", "name");
         res.send(uploads);
@@ -139,10 +183,39 @@ app.get('/api/uploads', async (req, res) => {
     }
 });
 
-// Get a specific upload from the database
-app.get('/api/uploads/:id', async (req, res) => {
+// Get comments for upload
+app.get('/api/uploads/:id/comments', validUser, async (req, res) => {
     try {
-        const upload = await Upload.findById(req.params.id)
+        const comments = await Comment.find({ upload: req.params.id }).populate("poster", "name");
+        res.status(200).send(comments);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+// Get comments for upload
+app.post('/api/uploads/:id/comments', validUser, async (req, res) => {
+    try {
+        const comment = new Comment({
+            poster: req.session.user,
+            upload: req.params.id,
+            text: req.body.text
+        });
+
+        await comment.save();
+
+        res.sendStatus(200);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+// Get a specific upload from the database
+app.get('/api/uploads/:id', validUser, async (req, res) => {
+    try {
+        const upload = await Upload.findById(req.params.id).populate("uploader", "name");
         res.status(200).send(upload);
     } catch (error) {
         console.log(error);
@@ -151,7 +224,7 @@ app.get('/api/uploads/:id', async (req, res) => {
 });
 
 // Delete an upload from the database
-app.delete('/api/uploads/:id', async (req, res) => {
+app.delete('/api/uploads/:id', validUser, async (req, res) => {
     try {
         await Upload.findByIdAndDelete(req.params.id)
 
@@ -163,7 +236,7 @@ app.delete('/api/uploads/:id', async (req, res) => {
 });
 
 // Edit an upload in the database
-app.put('/api/uploads/:id', async (req, res) => {
+app.put('/api/uploads/:id', validUser, async (req, res) => {
     try {
         if (req.body.tags) {
             req.body.tags = req.body.tags.split(/\s*,\s*/);

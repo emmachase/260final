@@ -12,7 +12,7 @@
     </header>
     <router-view/>
     <div class="source">
-      Source at <a href="https://github.com/emmachase/creative4">GitHub</a>
+      Source at <a href="https://github.com/emmachase/260final">GitHub</a>
     </div>
   </div>
 </template>
@@ -800,5 +800,9 @@ body {
 
 hr {
     opacity: 0.2;
+}
+
+.mt-0 {
+    margin-top: 0;
 }
 </style>

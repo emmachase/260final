@@ -3,16 +3,22 @@
     <div class="content-wrapper" v-if="file">
       <div class="twobreak" style="display: flex; justify-content: center">
         <div class="col">
-          <img :src="file.isImage ? file.path : '/file.svg'"/>
+          <img :src="file.isImage ? file.path : '/file.svg'" />
         </div>
         <div class="col">
-          <div class="form-entry">
+          <template v-if="file.uploader.name === $root.$data.user">
+            <div class="form-entry">
               <div class="heading" style="display: flex">
                 <span class="label">Title</span>
                 <div style="flex: 1"></div>
               </div>
               <div class="textfield">
-                <input v-model="file.title" type="text" placeholder="Epic Boxes" required />
+                <input
+                  v-model="file.title"
+                  type="text"
+                  placeholder="Epic Boxes"
+                  required
+                />
               </div>
             </div>
             <div class="form-entry">
@@ -32,7 +38,12 @@
                 <span class="label">Tags</span>
               </div>
               <div class="textfield">
-                <input v-model="file.tags" type="text" placeholder="tetris, pretty, epic" valu />
+                <input
+                  v-model="file.tags"
+                  type="text"
+                  placeholder="tetris, pretty, epic"
+                  valu
+                />
               </div>
             </div>
             <aside>
@@ -43,6 +54,53 @@
               <button class="button hide-load" @click="del">Delete</button>
               <button class="button hide-load" @click="save">Save</button>
             </div>
+          </template>
+          <template v-else>
+            <div class="form-entry">
+              <div class="heading" style="display: flex">
+                <span class="label">Title</span>
+                <div style="flex: 1"></div>
+              </div>
+              <h2>{{ file.title }}</h2>
+            </div>
+            <div class="form-entry">
+              <div class="heading" style="display: flex">
+                <span class="label">Description</span>
+              </div>
+              <h3>{{ file.desc }}</h3>
+            </div>
+            <div class="form-entry" v-if="file.tags">
+              <div class="heading" style="display: flex">
+                <span class="label">Tags</span>
+              </div>
+              <h3>{{ file.tags }}</h3>
+            </div>
+          </template>
+
+          <div class="form-entry">
+            <div class="heading" style="display: flex">
+              <span class="label">Comments</span>
+            </div>
+            <div v-for="comment in comments" :key="comment._id">
+              <h3>{{comment.poster.name}}</h3> 
+              <p class="mt-0">{{comment.text}}</p>
+            </div>
+          </div>
+          <div class="form-entry">
+            <div class="textfield">
+              <textarea
+                v-model="writingComment"
+                type="text"
+                placeholder="Write a comment..."
+              ></textarea>
+              <div class="submit">
+                <span></span>
+                <button class="button hide-load" @click="comment">
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -73,7 +131,7 @@
   flex: 1;
 }
 
-.submit { 
+.submit {
   display: flex;
   justify-content: space-between;
 }
@@ -90,17 +148,20 @@ export default Vue.extend({
   data() {
     return {
       file: null,
+      comments: [],
+      writingComment: "",
     };
   },
   mounted() {
     this.fetch();
+    this.fetchComments();
   },
   methods: {
     async del() {
       const result = await this.$axios.delete("uploads/" + this.file._id);
-      
+
       if (result.status == 200) {
-        this.$router.push('/list')
+        this.$router.push("/list");
       }
     },
     async save() {
@@ -111,20 +172,38 @@ export default Vue.extend({
       });
 
       if (result.status == 200) {
-        this.$router.push('/list')
+        this.$router.push("/list");
       }
     },
-    
+
     async fetch() {
       const result = await this.$axios.get("uploads/" + this.$route.params.id);
       if (result.status == 200) {
         this.file = {
           ...result.data,
           tags: result.data.tags.join(", "),
-          isImage: result.data.mime.startsWith("image")
+          isImage: result.data.mime.startsWith("image"),
         };
+        console.log(this.$root.$data.user, result.data);
+      }
+    },
+
+    async fetchComments() {
+      const result = await this.$axios.get("uploads/" + this.$route.params.id + "/comments");
+      if (result.status == 200) {
+        this.comments = result.data;
+      }
+    },
+
+    async comment() {
+      const result = await this.$axios.post("uploads/" + this.$route.params.id + "/comments", {
+        text: this.writingComment
+      });
+      if (result.status == 200) {
+        this.fetchComments();
+        this.writingComment = "";
       }
     }
-  }
+  },
 });
 </script>

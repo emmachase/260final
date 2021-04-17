@@ -11,8 +11,8 @@
                         <h3>emma&#x27;s file host lies here</h3>
                         <div class="textfield" :class="{ error }"><input type="text" autofocus="" placeholder="username" v-model="name" value="" /></div>
                         <div class="textfield" :class="{ error }"><input type="password" autofocus="" placeholder="password" v-model="password" value="" />
-                        </div><button type="submit" class="button hide-load wide margin">Login</button>
-                        <aside class="thick">for dmca etc, contact `adm at its-em dot ma`</aside>
+                        </div><button type="submit" class="button hide-load wide margin">{{registering ? 'Register' : 'Login'}}</button>
+                        <aside class="thick">or <a href="#" @click="register">{{registering ? 'login' : 'register'}}</a></aside>
                     </form>
                 </div>
             </div>
@@ -28,7 +28,8 @@ export default Vue.extend({
         return {
             name: "",
             password: "",
-            error: false
+            error: false,
+            registering: false,
         }
     },
     components: {
@@ -43,9 +44,13 @@ export default Vue.extend({
 
             if (result.status == 200) {
                 this.$router.push('gallery');
+                this.$root.$data.user = this.name;
             } else {
                 this.error = true;
             }
+        },
+        register() {
+            this.registering = !this.registering;
         }
     }
 })
